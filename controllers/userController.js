@@ -1,6 +1,8 @@
 const { response, request } = require("express"); // importamos response de express
 const Usuario = require("../models/user"); //importamos el modelo de usuario
 const bcryptjs = require("bcryptjs"); //importamos bcryptjs
+const {validationResult}=require('express-validator');// importamos validationResult de express-validator
+
 
 const usuariosGet = (req = request, res = response) => {
   const { q, nombre = "no name", apikey, page = "1", limit } = req.query;
@@ -23,6 +25,13 @@ const usuariosPut = (req = request, res = response) => {
 };
 
 const usuariosPost = async (req = request, res = response) => {
+
+const errors=validationResult(req);// obtenemos los errores de la validacion y los guardamos en la constante errors
+
+if(!errors.isEmpty()){
+  return res.status(400).json(errors);// si hay errores retornamos un status 400 y los errores
+}
+
   const { nombre, correo, password, rol } = req.body;
   const usuario = new Usuario({ nombre, correo, password, rol });
 
