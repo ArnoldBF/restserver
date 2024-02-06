@@ -32,7 +32,7 @@ const usuarioSchema = Schema({
   rol: {
     type: String,
     required: true,
-    enum: ["ADMIN_ROLE", "USER_ROLE"], //que solo acepte esos valores
+    enum: ["ADMIN_ROLE", "USER_ROLE","VENTAS_ROLE"], //que solo acepte esos valores
   },
   estado: {
     type: Boolean,

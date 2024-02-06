@@ -29,7 +29,7 @@ const usuariosPut = async (req = request, res = response) => {
 
   res.json({
     msg: "put API - controlador",
-    id,
+    usuario,
   });
 };
 
