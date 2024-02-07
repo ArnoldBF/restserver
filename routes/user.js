@@ -8,11 +8,18 @@ const {
 } = require("../controllers/userController");
 const { check } = require("express-validator"); // importamos check de express-validator
 const { validarCampos } = require("../middlewares/validar-campos"); // importamos validarCampos de validar-campos.js
-const { roleValido, emailExist } = require("../helpers/db-validators");
+const { roleValido, emailExist, usuarioExist } = require("../helpers/db-validators");
 const router = Router(); //creamos una instancia de Router
 
 router.get("/", usuariosGet);
-router.put("/:id", usuariosPut);
+router.put(
+  "/:id",
+  [check("id", "No es un ID valido").isMongoId(),
+  check("id").custom(usuarioExist) ,
+  check("rol").custom(roleValido),
+  validarCampos],
+  usuariosPut
+);
 router.post(
   "/",
   [

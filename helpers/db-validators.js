@@ -14,7 +14,15 @@ const emailExist = async (correo = "") => {
     throw new Error(`El correo ${correo}, ya esta en uso`);
   }
 };
+
+const usuarioExist = async (id = "") => {
+  const existeUsuario = await Usuario.findById(id);
+  if (!existeUsuario) {
+    throw new Error(`El usuario ${id}, no exite`);
+  }
+};
 module.exports = {
   roleValido,
   emailExist,
+  usuarioExist,
 };
