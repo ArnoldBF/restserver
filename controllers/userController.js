@@ -2,15 +2,12 @@ const { response, request } = require("express"); // importamos response de expr
 const Usuario = require("../models/user"); //importamos el modelo de usuario
 const bcryptjs = require("bcryptjs"); //importamos bcryptjs
 
-const usuariosGet = (req = request, res = response) => {
-  const { q, nombre = "no name", apikey, page = "1", limit } = req.query;
+const usuariosGet = async (req = request, res = response) => {
+ // const { q, nombre = "no name", apikey, page = "1", limit } = req.query;
+ const usuarios=await Usuario.find();
   res.json({
     msg: "get API - controlador",
-    q,
-    nombre,
-    apikey,
-    page,
-    limit,
+   usuarios
   });
 };
 
