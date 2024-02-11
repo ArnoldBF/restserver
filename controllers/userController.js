@@ -60,9 +60,20 @@ const usuariosPost = async (req = request, res = response) => {
   });
 };
 
-const usuariosDelete = (req = request, res = response) => {
+const usuariosDelete = async(req = request, res = response) => {
+
+  const {id}=req.params;
+  //Borrar fisicamente de la base de datos
+ // const usuario=await Usuario.findByIdAndDelete(id);
+
+ //Manera correcta de borrar un usuario sin impactar la base de datos
+ const usuario=await Usuario.findByIdAndUpdate(id,{estado:false});
+
+
   res.json({
     msg: "delete API - controlador",
+    msg:`El usuario:${usuario.nombre} con id:${usuario.id} fue eliminado`,
+    usuario,
   });
 };
 

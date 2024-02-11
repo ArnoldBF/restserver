@@ -8,16 +8,22 @@ const {
 } = require("../controllers/userController");
 const { check } = require("express-validator"); // importamos check de express-validator
 const { validarCampos } = require("../middlewares/validar-campos"); // importamos validarCampos de validar-campos.js
-const { roleValido, emailExist, usuarioExist } = require("../helpers/db-validators");
+const {
+  roleValido,
+  emailExist,
+  usuarioExist,
+} = require("../helpers/db-validators");
 const router = Router(); //creamos una instancia de Router
 
 router.get("/", usuariosGet);
 router.put(
   "/:id",
-  [check("id", "No es un ID valido").isMongoId(),
-  check("id").custom(usuarioExist) ,
-  check("rol").custom(roleValido),
-  validarCampos],
+  [
+    check("id", "No es un ID valido").isMongoId(),
+    check("id").custom(usuarioExist),
+    check("rol").custom(roleValido),
+    validarCampos,
+  ],
   usuariosPut
 );
 router.post(
@@ -34,7 +40,15 @@ router.post(
   ],
   usuariosPost
 ); // se ejecuta el middleware de express-validator para validar los campos
-router.delete("/:id", usuariosDelete);
+router.delete(
+  "/:id",
+  [
+    check("id", "No es un ID valido").isMongoId(),
+    check("id").custom(usuarioExist),
+    validarCampos
+  ],
+  usuariosDelete
+);
 router.patch("/", usuariosPatch);
 
 module.exports = router; //exportamos el router
