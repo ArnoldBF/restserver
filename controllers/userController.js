@@ -3,18 +3,33 @@ const Usuario = require("../models/user"); //importamos el modelo de usuario
 const bcryptjs = require("bcryptjs"); //importamos bcryptjs
 
 const usuariosGet = async (req = request, res = response) => {
- // const { q, nombre = "no name", apikey, page = "1", limit } = req.query;
- const{limite=5}=req.query;// si no se envia el limite se pone por defecto 5
- const usuarios=await Usuario.find().limit(Number(limite));// limitamos la cantidad de usuarios que se muestran
+  // const { q, nombre = "no name", apikey, page = "1", limit } = req.query;
+  const { limite = 5, desde = 0 } = req.query; // si no se envia el limite se pone por defecto 5
+  const queryEstado = { estado: true }; //creamos un objeto para filtrar los usuarios que esten activos
+
+  if (isNaN(limite) || isNaN(desde)) {
+    //validamos que el limite y desde sean numeros con la funcion isNaN
+    return res.status(400).json({
+      msg: "limite y desde deben ser numeros",
+    });
+  }
+
+  const [total,usuarios] = await Promise.all([ // resp es un arreglo que contiene dos promesas que se ejecutan al mismo tiempo y se almacenan en el arreglo 
+  Usuario.countDocuments(queryEstado),// Este query es para contar los usuarios que esten activos
+  Usuario.find(queryEstado).limit(Number(limite)).skip(Number(desde)) // Este query es para obtener los usuarios que esten activos
+   
+  ]);
+
   res.json({
     msg: "get API - controlador",
-   usuarios
+    total,
+    usuarios
   });
 };
 
 const usuariosPut = async (req = request, res = response) => {
-  const { id } = req.params;// obtenemos el id de los parametros
-  const { _id,password, google, correo, ...resto } = req.body;
+  const { id } = req.params; // obtenemos el id de los parametros
+  const { _id, password, google, correo, ...resto } = req.body;// extraemos el id, password, google y correo del body y el resto lo almacenamos en la variable resto para actualizar los datos del usuario sin afectar el id, password, google y correo
   //hacer:validar contra base de datos
 
   if (password) {
@@ -23,7 +38,7 @@ const usuariosPut = async (req = request, res = response) => {
     resto.password = bcryptjs.hashSync(password, salt); //encriptamos la contraseña
   }
 
-  const usuario = await Usuario.findByIdAndUpdate(id, resto);
+  const usuario = await Usuario.findByIdAndUpdate(id, resto);// actualizamos el usuario con el id y los datos que estan en la variable resto
 
   res.json({
     msg: "put API - controlador",

@@ -34,7 +34,7 @@ router.post(
   ],
   usuariosPost
 ); // se ejecuta el middleware de express-validator para validar los campos
-router.delete("/", usuariosDelete);
+router.delete("/:id", usuariosDelete);
 router.patch("/", usuariosPatch);
 
 module.exports = router; //exportamos el router
