@@ -1,4 +1,6 @@
 const { Router } = require("express"); //importamos solo el Router de express
+const { check } = require("express-validator"); // importamos check de express-validator
+
 const {
   usuariosGet,
   usuariosPut,
@@ -6,8 +8,18 @@ const {
   usuariosDelete,
   usuariosPatch,
 } = require("../controllers/userController");
-const { check } = require("express-validator"); // importamos check de express-validator
-const { validarCampos } = require("../middlewares/validar-campos"); // importamos validarCampos de validar-campos.js
+
+//MIDDLEWARES
+//const { validarCampos } = require("../middlewares/validar-campos"); // importamos validarCampos de validar-campos.js
+//const { validarJWT } = require("../middlewares/validar-jwt");
+//const { validarRol,tieneRol } = require("../middlewares/validar-roles");
+const {
+  validarCampos,
+  validarJWT,
+  validarRol,
+  tieneRol,
+} = require("../middlewares");
+
 const {
   roleValido,
   emailExist,
@@ -43,9 +55,12 @@ router.post(
 router.delete(
   "/:id",
   [
+    validarJWT,
+    //validarRol,
+    tieneRol("ADMIN_ROLE", "VENTAS_ROLE"),
     check("id", "No es un ID valido").isMongoId(),
     check("id").custom(usuarioExist),
-    validarCampos
+    validarCampos,
   ],
   usuariosDelete
 );

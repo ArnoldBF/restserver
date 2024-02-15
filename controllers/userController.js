@@ -14,22 +14,22 @@ const usuariosGet = async (req = request, res = response) => {
     });
   }
 
-  const [total,usuarios] = await Promise.all([ // resp es un arreglo que contiene dos promesas que se ejecutan al mismo tiempo y se almacenan en el arreglo 
-  Usuario.countDocuments(queryEstado),// Este query es para contar los usuarios que esten activos
-  Usuario.find(queryEstado).limit(Number(limite)).skip(Number(desde)) // Este query es para obtener los usuarios que esten activos
-   
+  const [total, usuarios] = await Promise.all([
+    // resp es un arreglo que contiene dos promesas que se ejecutan al mismo tiempo y se almacenan en el arreglo
+    Usuario.countDocuments(queryEstado), // Este query es para contar los usuarios que esten activos
+    Usuario.find(queryEstado).limit(Number(limite)).skip(Number(desde)), // Este query es para obtener los usuarios que esten activos
   ]);
 
   res.json({
     msg: "get API - controlador",
     total,
-    usuarios
+    usuarios,
   });
 };
 
 const usuariosPut = async (req = request, res = response) => {
   const { id } = req.params; // obtenemos el id de los parametros
-  const { _id, password, google, correo, ...resto } = req.body;// extraemos el id, password, google y correo del body y el resto lo almacenamos en la variable resto para actualizar los datos del usuario sin afectar el id, password, google y correo
+  const { _id, password, google, correo, ...resto } = req.body; // extraemos el id, password, google y correo del body y el resto lo almacenamos en la variable resto para actualizar los datos del usuario sin afectar el id, password, google y correo
   //hacer:validar contra base de datos
 
   if (password) {
@@ -38,7 +38,7 @@ const usuariosPut = async (req = request, res = response) => {
     resto.password = bcryptjs.hashSync(password, salt); //encriptamos la contraseña
   }
 
-  const usuario = await Usuario.findByIdAndUpdate(id, resto);// actualizamos el usuario con el id y los datos que estan en la variable resto
+  const usuario = await Usuario.findByIdAndUpdate(id, resto); // actualizamos el usuario con el id y los datos que estan en la variable resto
 
   res.json({
     msg: "put API - controlador",
@@ -60,20 +60,32 @@ const usuariosPost = async (req = request, res = response) => {
   });
 };
 
-const usuariosDelete = async(req = request, res = response) => {
-
-  const {id}=req.params;
+const usuariosDelete = async (req = request, res = response) => {
+  const { id } = req.params;
+  //const usuarioAutenticado = req.usuario;
   //Borrar fisicamente de la base de datos
- // const usuario=await Usuario.findByIdAndDelete(id);
+  // const usuario=await Usuario.findByIdAndDelete(id);
 
- //Manera correcta de borrar un usuario sin impactar la base de datos
- const usuario=await Usuario.findByIdAndUpdate(id,{estado:false});
+  //Manera correcta de borrar un usuario sin impactar la base de datos
+
+  
+
+    const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
+
+    if(!usuario.estado){
+      return res.status(400).json({
+        msg:`El usuario con el id:${id} esta deshabilitado por lo tanto no se puede eliminar`
+      })
+    }
+
 
 
   res.json({
     msg: "delete API - controlador",
-    msg:`El usuario:${usuario.nombre} con id:${usuario.id} fue eliminado`,
+    msg: `El usuario:${usuario.nombre} con id:${usuario.id} fue eliminado`,
     usuario,
+    //usuarioAutenticado,
+    
   });
 };
 

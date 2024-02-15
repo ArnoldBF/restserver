@@ -7,6 +7,7 @@ class Server {
     this.app = express(); //creamos una instancia de express
     this.port = process.env.PORT; //process.env.PORT: variable de entorno
     this.usuariosPath = "/api/usuarios"; // Path: models/server.js que hace referencia a usuarios de la carpeat routes
+   this.authPath= '/api/auth';// 
     //Concectar a base de datos
     this.conectarDB();
     //Middlewares
@@ -27,6 +28,7 @@ class Server {
   }
 
   routes() {
+    this.app.use(this.authPath, require("../routes/auth"));
     this.app.use(this.usuariosPath, require("../routes/user"));
   }
 
