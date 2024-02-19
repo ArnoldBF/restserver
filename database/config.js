@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const dbConnection = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_ATLAS||'mongodb+srv://restserver:3k8bdaDb6ipYtel8@cluster0.pm7xmde.mongodb.net/');
+    await mongoose.connect(process.env.MONGODB_ATLAS||'mongodb+srv://restserver:3k8bdaDb6ipYtel8@cluster0.pm7xmde.mongodb.net/test');
     console.log("DB online");
   } catch (error) {
     console.log(error);
