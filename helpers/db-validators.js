@@ -1,3 +1,4 @@
+const { Categoria } = require("../models");
 const Role = require("../models/role"); // importamos el modelo de role
 const Usuario = require("../models/user"); // importamos el modelo de usuario
 
@@ -21,8 +22,15 @@ const usuarioExist = async (id = "") => {
     throw new Error(`El usuario ${id}, no exite`);
   }
 };
+const categoriaExist = async (id = "") => {
+  const existCategoria = await Categoria.findById(id);
+  if (!existCategoria) {
+    throw new Error(`La categoria ${id}, no exite`);
+  }
+};
 module.exports = {
   roleValido,
   emailExist,
   usuarioExist,
+  categoriaExist,
 };
