@@ -79,13 +79,33 @@ const categoriaPost = async (req = request, res = response) => {
 };
 
 const categoriaPut = async (req = request, res = response) => {
+  const { id } = req.params;
+  const { _id, usuario, ...resto } = req.body;
+
+  resto.usuario = req.usuario._id;
+
+  const categoria = await Categoria.findByIdAndUpdate(id, resto, {
+    new: true,
+  }).populate("usuario", "nombre");
+
   res.json({
     msq: "todo ok desde put",
+    categoria,
   });
 };
 const categoriaDelete = async (req = request, res = response) => {
-  res.json({
+  const { id } = req.params;
+  const categoria = await Categoria.findByIdAndUpdate(
+    id,
+    {
+      estado: false,
+    },
+    { new: true }
+  ).populate("usuario", "nombre");
+
+  res.status(200).json({
     msq: "todo ok desde delete",
+    categoria,
   });
 };
 

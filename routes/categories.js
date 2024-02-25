@@ -3,7 +3,7 @@ const { Router } = require("express");
 
 const { check } = require("express-validator");
 
-const { validarCampos, validarJWT } = require("../middlewares");
+const { validarCampos, validarJWT, validarRol } = require("../middlewares");
 const {
     categoriaGet,
     categoriaPost,
@@ -12,7 +12,7 @@ const {
     categoriaGetPorId,
 } = require("../controllers/categoriesController");
 
-const { categoriaExist } = require('../helpers/db-validators');
+const { categoriaExist } = require("../helpers/db-validators");
 
 const router = Router();
 
@@ -25,11 +25,15 @@ const router = Router();
 router.get("/", categoriaGet);
 
 //Obtener una categoria por id
-router.get("/:id", [
-    check('id', 'No es id valido de mongo').isMongoId(),
-    check('id').custom(categoriaExist),
-    validarCampos
-], categoriaGetPorId);
+router.get(
+    "/:id",
+    [
+        check("id", "No es id valido de mongo").isMongoId(),
+        check("id").custom(categoriaExist),
+        validarCampos,
+    ],
+    categoriaGetPorId
+);
 
 //Crear una categoria-privado- solo usuarios con accesos
 router.post(
@@ -44,9 +48,30 @@ router.post(
 );
 
 //actualizar una categoria por id-privado- solo usuarios con acceso
-router.put("/:id", categoriaPut);
+router.put(
+    "/:id",
+    [
+        validarJWT,
+        check("id", "No es id valudo de mongo").isMongoId(),
+        check("nombre", "el nombre es obligatorio"),
+        check("id").custom(categoriaExist),
+        validarCampos,
+    ],
+
+    categoriaPut
+);
 
 //Eleminar una categoria por id-privado solo para  ADMIN_ROLE
-router.delete("/:id", categoriaDelete);
+router.delete(
+    "/:id",
+    [
+        validarJWT,
+        validarRol,
+        check("id", "No es id valido de mongo").isMongoId(),
+        check("id").custom(categoriaExist),
+        validarCampos,
+    ],
+    categoriaDelete
+);
 
 module.exports = router;

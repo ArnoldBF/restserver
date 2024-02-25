@@ -38,7 +38,7 @@ const usuariosPut = async (req = request, res = response) => {
     resto.password = bcryptjs.hashSync(password, salt); //encriptamos la contraseña
   }
 
-  const usuario = await Usuario.findByIdAndUpdate(id, resto); // actualizamos el usuario con el id y los datos que estan en la variable resto
+  const usuario = await Usuario.findByIdAndUpdate(id, resto, { new: true }); // actualizamos el usuario con el id y los datos que estan en la variable resto
 
   res.json({
     msg: "put API - controlador",
@@ -68,24 +68,17 @@ const usuariosDelete = async (req = request, res = response) => {
 
   //Manera correcta de borrar un usuario sin impactar la base de datos
 
-  
-
-    const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
-
-    if(!usuario.estado){
-      return res.status(400).json({
-        msg:`El usuario con el id:${id} esta deshabilitado por lo tanto no se puede eliminar`
-      })
-    }
-
-
+  const usuario = await Usuario.findByIdAndUpdate(
+    id,
+    { estado: false },
+    { new: true }
+  );
 
   res.json({
     msg: "delete API - controlador",
     msg: `El usuario:${usuario.nombre} con id:${usuario.id} fue eliminado`,
     usuario,
     //usuarioAutenticado,
-    
   });
 };
 

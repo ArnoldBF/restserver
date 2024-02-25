@@ -9,7 +9,7 @@ const categoriaSchema = Schema({
   descripcion: {
     type: String,
     required: [true, "La descripcion es obligatoria"],
-    unique: true, //que sea unico
+    // unique: true, //que sea unico
   },
 
   estado: {
