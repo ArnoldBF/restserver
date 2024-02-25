@@ -6,15 +6,14 @@ class Server {
   constructor() {
     this.app = express(); //creamos una instancia de express
     this.port = process.env.PORT; //process.env.PORT: variable de entorno
-     // Path: models/server.js que hace referencia a usuarios de la carpeat routes
-   
+    // Path: models/server.js que hace referencia a usuarios de la carpeat routes
 
-    this.paths={
-      auth:'/api/auth',
-      usuarios:'/api/usuarios',
-      categorias:'/api/categorias'
-
-    }
+    this.paths = {
+      auth: "/api/auth",
+      usuarios: "/api/usuarios",
+      categorias: "/api/categorias",
+      productos: "/api/productos",
+    };
     //Concectar a base de datos
     this.conectarDB();
     //Middlewares
@@ -38,6 +37,7 @@ class Server {
     this.app.use(this.paths.auth, require("../routes/auth"));
     this.app.use(this.paths.usuarios, require("../routes/user"));
     this.app.use(this.paths.categorias, require("../routes/categories"));
+    this.app.use(this.paths.productos, require("../routes/products"));
   }
 
   listen() {

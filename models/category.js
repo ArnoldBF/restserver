@@ -28,6 +28,7 @@ const categoriaSchema = Schema({
 categoriaSchema.methods.toJSON = function () {
   const { __v, _id, ...categoria } = this.toObject(); // extraemos la version, y el id del objeto y el resto lo almacenamos en la variable categoria para evitar que se muestren en la respuesta
   categoria.uid = _id; // cambiamos el nombre del id por uid
+
   return categoria;
 };
 
