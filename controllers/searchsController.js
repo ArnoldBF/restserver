@@ -63,9 +63,30 @@ const buscarProductos = async (termino = '', res = response) => {
 	const esMongoID = ObjectId.isValid(termino);
 
 	if (esMongoID) {
-		const producto = await Product.findById(termino);
+		const cantidad = await Product.countDocuments({
+			$or: [
+				{ categoria: new ObjectId(termino) },
+				{ _id: new ObjectId(termino) },
+			],
+			$and: [{ estado: true }],
+		});
+		const productoPorCategoria = await Product.find({
+			categoria: new ObjectId(termino),
+			estado: true,
+		})
+			.populate('categoria', 'nombre')
+			.populate('usuario', 'nombre');
+
+		const producto = await Product.findById(termino)
+			.populate('categoria', 'nombre')
+			.populate('usuario', 'nombre');
 		return res.json({
-			results: producto ? [producto] : [],
+			cantidad,
+			results: producto
+				? [producto]
+				: [] || productoPorCategoria
+					? productoPorCategoria
+					: [],
 		});
 	}
 	const regex = new RegExp(termino, 'i'); // expresion regular
@@ -77,7 +98,9 @@ const buscarProductos = async (termino = '', res = response) => {
 	const productos = await Product.find({
 		$or: [{ nombre: regex }, { descripcion: regex }],
 		$and: [{ estado: true }],
-	});
+	})
+		.populate('categoria', 'nombre')
+		.populate('usuario', 'nombre');
 
 	res.json({
 		cantidad,
