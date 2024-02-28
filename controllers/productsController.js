@@ -96,7 +96,9 @@ const deleteProducto = async (req = request, res = response) => {
 		id,
 		{ estado: false },
 		{ new: true },
-	).populate('usuario', 'nombre');
+	)
+		.populate('usuario', 'nombre')
+		.populate('categoria', 'nombre');
 
 	res.status(200).json({
 		msg: 'todo ok desde deleteproducto',
