@@ -34,7 +34,10 @@ const buscarCategorias = async (termino = '', res = response) => {
 	const esMongoID = ObjectId.isValid(termino);
 
 	if (esMongoID) {
-		const categoria = await Categoria.findById(termino);
+		const categoria = await Categoria.findById(termino).populate(
+			'usuario',
+			'nombre',
+		);
 
 		return res.json({
 			results: categoria ? [categoria] : [],
@@ -51,7 +54,7 @@ const buscarCategorias = async (termino = '', res = response) => {
 	const categorias = await Categoria.find({
 		$or: [{ nombre: regex }, { descripcion: regex }],
 		$and: [{ estado: true }],
-	});
+	}).populate('usuario', 'nombre');
 
 	res.json({
 		cantidad,
