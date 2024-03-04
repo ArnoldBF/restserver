@@ -34,10 +34,7 @@ const buscarCategorias = async (termino = '', res = response) => {
 	const esMongoID = ObjectId.isValid(termino);
 
 	if (esMongoID) {
-		const categoria = await Categoria.findById(termino).populate(
-			'usuario',
-			'nombre',
-		);
+		const categoria = await Categoria.findById(termino).populate('usuario', 'nombre');
 
 		return res.json({
 			results: categoria ? [categoria] : [],
@@ -67,10 +64,7 @@ const buscarProductos = async (termino = '', res = response) => {
 
 	if (esMongoID) {
 		const cantidad = await Product.countDocuments({
-			$or: [
-				{ categoria: new ObjectId(termino) },
-				{ _id: new ObjectId(termino) },
-			],
+			$or: [{ categoria: new ObjectId(termino) }, { _id: new ObjectId(termino) }],
 			$and: [{ estado: true }],
 		});
 		const productoPorCategoria = await Product.find({
@@ -80,16 +74,10 @@ const buscarProductos = async (termino = '', res = response) => {
 			.populate('categoria', 'nombre')
 			.populate('usuario', 'nombre');
 
-		const producto = await Product.findById(termino)
-			.populate('categoria', 'nombre')
-			.populate('usuario', 'nombre');
+		const producto = await Product.findById(termino).populate('categoria', 'nombre').populate('usuario', 'nombre');
 		return res.json({
 			cantidad,
-			results: producto
-				? [producto]
-				: [] || productoPorCategoria
-					? productoPorCategoria
-					: [],
+			results: producto ? [producto] : [] || productoPorCategoria ? productoPorCategoria : [],
 		});
 	}
 	const regex = new RegExp(termino, 'i'); // expresion regular
@@ -113,11 +101,7 @@ const buscarProductos = async (termino = '', res = response) => {
 const buscar = (req = request, res = response) => {
 	const { coleccion, termino } = req.params;
 
-	const collecionesPermitidas = [
-		'usuarios',
-		'categorias',
-		'productos',
-	];
+	const collecionesPermitidas = ['usuarios', 'categorias', 'productos'];
 
 	if (!collecionesPermitidas.includes(coleccion)) {
 		return res.status(400).json({

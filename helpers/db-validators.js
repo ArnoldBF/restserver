@@ -17,21 +17,28 @@ const emailExist = async (correo = '') => {
 const usuarioExist = async (id = '') => {
 	const existeUsuario = await Usuario.findById(id);
 	if (!existeUsuario) {
-		throw new Error(`El usuario ${id}, no exite`);
+		throw new Error(`El usuario ${id}, no existe`);
 	}
 };
 const categoriaExist = async (id = '') => {
 	const existCategoria = await Categoria.findById(id);
 	if (!existCategoria) {
-		throw new Error(`La categoria ${id}, no exite`);
+		throw new Error(`La categoria ${id}, no existe`);
 	}
 };
 
 const productoExist = async (id = '') => {
 	const existProducto = await Product.findById(id);
 	if (!existProducto) {
-		throw new Error(`El producto ${id}, no exite`);
+		throw new Error(`El producto ${id}, no existe`);
 	}
+};
+
+const coleccionExist = (c = '', coleccionesPermitas = []) => {
+	if (!coleccionesPermitas.includes(c)) {
+		throw new Error(`las colecciones permitidas son ${coleccionesPermitas}`);
+	}
+	return true;
 };
 
 module.exports = {
@@ -40,4 +47,5 @@ module.exports = {
 	usuarioExist,
 	categoriaExist,
 	productoExist,
+	coleccionExist,
 };
