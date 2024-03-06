@@ -1,22 +1,16 @@
 const path = require('path');
 
 const { v4: uuidv4 } = require('uuid');
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config(process.env.CLOUDINARY_URL);
 
 const subirArchivo = (files, extensionesValidas = ['png', 'jpg', 'jpeg', 'gif', 'pdf'], carpeta = '') => {
 	return new Promise((resolve, reject) => {
-		if (!files || !files.archivo) {
-			// eslint-disable-next-line prefer-promise-reject-errors
-			return reject('no se ha cargado ningun archivo');
-		}
 		const { archivo } = files;
 
 		const nombreCortado = archivo.name.split('.');
 		const extension = nombreCortado[nombreCortado.length - 1];
-		/** 
-	const uniondeNombre = nombreCortado.reduce((a, b) => {
-		return a + '_' + b;
-	});
-	*/
 
 		// validar extensiones
 
@@ -32,8 +26,9 @@ const subirArchivo = (files, extensionesValidas = ['png', 'jpg', 'jpeg', 'gif', 
 		archivo.mv(uploadPath, (err) => {
 			if (err) {
 				console.log(err);
-				return reject(err);
+				reject(err);
 			}
+
 			resolve(nombreTemp);
 		});
 	});
